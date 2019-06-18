@@ -29,6 +29,7 @@ class TestApiCoinmarketcap(unittest.TestCase):
     def test_time_spent_less_then_500_ms(self):
         self.assertTrue(self.get_tickers_with_max_volume()['time_spent'] < 0.5)
 
+
     def test_data_size_less_then_10_kb(self):
         self.assertTrue(self.get_tickers_with_max_volume()['size'] < 10000)
 
@@ -38,24 +39,28 @@ class TestApiCoinmarketcap(unittest.TestCase):
 
 
 class TestServerSpeed(unittest.TestCase):
+    obj = TestApiCoinmarketcap()
 
     def getting_data_multiproc(self):
-        testing_func = TestApiCoinmarketcap().get_tickers_with_max_volume
+        testing_func = self.obj.get_tickers_with_max_volume
         time_spent = []
         for i in range(8):
             try:
                 t = threading.Thread(target=testing_func)
                 t.start()
                 time_spent.append(testing_func()['time_spent'])
+                if self.obj.test_time_spent_less_then_500_ms() == False or \
+                    self.obj.test_data_size_less_then_10_kb() == False or \
+                    self.obj.test_updated_today() == False:
+                    return False
+
             except:
                 return False
         percentile = numpy.percentile(time_spent, 80)
         rps = 8/sum(time_spent)
+
         return {'rps': rps,
                 'percentile': percentile}
-
-    def test_connection_all_processes(self):
-        self.assertTrue(self.getting_data_multiproc() != False)
 
     def test_rps_less_then_5_sec(self):
         self.assertTrue(self.getting_data_multiproc()['rps'] > 5)
