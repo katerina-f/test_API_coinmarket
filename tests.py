@@ -1,4 +1,3 @@
-import asyncio
 from coinmarketcap import Market
 from datetime import datetime
 import numpy
