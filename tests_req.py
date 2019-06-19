@@ -54,14 +54,17 @@ class TestApiCoinmarketcap(unittest.TestCase):
                 'size': size}
 
     def test_time_spent_less_then_500_ms(self):
-        self.assertTrue(self._get_data_for_tests()['time_spent'] > 0.5)
+        self.assertTrue(self._get_data_for_tests()['time_spent'] < 0.5)
+        print(self._get_data_for_tests()['time_spent'])
 
     def test_data_size_less_then_10_kb(self):
         self.assertTrue(self._get_data_for_tests()['size'] < 10000)
+        print(self._get_data_for_tests()['size'])
 
     def test_updated_today(self):
         for date in self._get_data_for_tests()['dates']:
             self.assertTrue(date == str(datetime.today().date()))
+        print(self._get_data_for_tests()['dates'])
 
 
 class TestServerSpeed(unittest.TestCase):
@@ -87,9 +90,11 @@ class TestServerSpeed(unittest.TestCase):
 
     def test_rps_less_then_5_sec(self):
         self.assertTrue(self.clear_data['rps'] < 5)
+        print(self.clear_data['rps'])
 
     def test_80_perc_latency(self):
         self.assertTrue(self.clear_data['percentile'] < 450)
+        print(self.clear_data['percentile'])
 
 
 if __name__ == '__main__':
